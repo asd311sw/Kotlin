@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.example.mylottoapplication.databinding.ActivityMainBinding
 import kotlin.random.Random
@@ -17,8 +18,9 @@ class MainActivity : AppCompatActivity() {
     private var isRun = false
     private val list = mutableListOf<Int>()
     private val textViewList = mutableListOf<TextView>()
-
+    private lateinit var numberList:List<Int>
     var idx = 0
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,12 +52,17 @@ class MainActivity : AppCompatActivity() {
             list.shuffle()
 
 
-            var numberList = pickNumberSet.toList() + list.subList(0,6-pickNumberSet.size)
+            if(pickNumberSet.size==6)
+                numberList = list.subList(0,6)
+            else
+                numberList = pickNumberSet.toList() + list.subList(0,6-pickNumberSet.size)
+
 
             numberList = numberList.sorted()
 
             numberList.forEachIndexed { index, i ->
 
+                setBackground(idx)
                 textViewList[index].isVisible = true
                 textViewList[index].text = i.toString()
             }
@@ -75,6 +82,9 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this,"이미 선택한 번호입니다.",Toast.LENGTH_LONG).show()
             else {
                 pickNumberSet.add(view.numberPicker.value)
+
+
+                setBackground(idx)
                 textViewList[idx].isVisible = true
                 textViewList[idx++].text = view.numberPicker.value.toString()
             }
@@ -94,9 +104,21 @@ class MainActivity : AppCompatActivity() {
 
 
         }
+    }
 
-        
 
 
+    fun setBackground(idx:Int){
+        val backColor = when(view.numberPicker.value){
+            in 1..7 -> ContextCompat.getDrawable(this,R.drawable.circle_shape1)
+            in 8..15 -> ContextCompat.getDrawable(this,R.drawable.circle_shape2)
+            in 16..23 -> ContextCompat.getDrawable(this,R.drawable.circle_shape3)
+            in 24..31 -> ContextCompat.getDrawable(this,R.drawable.circle_shape4)
+            in 32..39 -> ContextCompat.getDrawable(this,R.drawable.circle_shape5)
+            else -> ContextCompat.getDrawable(this,R.drawable.circle_shape6)
+        }
+
+
+        textViewList[idx].background = backColor
     }
 }
